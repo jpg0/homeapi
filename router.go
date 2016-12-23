@@ -22,5 +22,6 @@ func setupRouting() {
 }
 
 func setupHandlers() {
-	InitDownloadActions();
+	InitListActions();
+	InitRestartActions();
 }

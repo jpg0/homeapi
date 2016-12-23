@@ -13,18 +13,30 @@ func HandleAction(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(actionRequest)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		actionError(err, w)
 		return
 	}
 
 	actionResponse, err := RunAction(actionRequest)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		actionError(err, w)
 		return
 	}
 
 	responseData, err := json.Marshal(actionResponse)
+
+	if err != nil {
+		actionError(err, w)
+		return
+	}
+
+	w.Write(responseData)
+}
+
+func actionError(e error, w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
+	responseData, err := json.Marshal(&ActionResponse{E:e})
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
