@@ -21,6 +21,7 @@ func ConfigureHandleAction(cfg map[string]string) func(http.ResponseWriter, *htt
 		actionResponse, err := RunAction(actionRequest, cfg)
 
 		if err != nil {
+			logrus.Errorf("Failed to run action: %v", err)
 			actionError(err, w)
 			return
 		}
@@ -28,6 +29,7 @@ func ConfigureHandleAction(cfg map[string]string) func(http.ResponseWriter, *htt
 		responseData, err := json.Marshal(actionResponse)
 
 		if err != nil {
+			logrus.Errorf("Failed to mashal data: %v", err)
 			actionError(err, w)
 			return
 		}
