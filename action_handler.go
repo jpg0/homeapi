@@ -67,6 +67,7 @@ func Register(name string, runner ActionRunner) {
 
 func RunAction(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 	logrus.Infof("Running action: %v", req.Name)
+	logrus.Debugf("Request details: %+v", req)
 
 	runner := actionRunnerFactory[req.Name]
 
