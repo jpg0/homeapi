@@ -82,14 +82,14 @@ func ConfigureAndStart(c *cli.Context) error {
 }
 
 func loadConfiguration(path string) (map[string]string, error) {
-	rv := make(map[string]string)
+	var rv map[string]string
 	file, err := ioutil.ReadFile(path)
 
 	if err != nil {
 		return nil, errors.Annotate(err, "Failed to read config file")
 	}
 
-	err = json.Unmarshal(file, rv)
+	err = json.Unmarshal(file, &rv)
 
 	if err != nil {
 		return nil, errors.Annotate(err, "Failed to unmarshal config")
