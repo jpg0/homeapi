@@ -7,31 +7,33 @@ import (
 	"github.com/juju/errors"
 )
 
-func HandleAction(w http.ResponseWriter, r *http.Request) {
-	actionRequest := new(ActionRequest)
+func ConfigureHandleAction(cfg *Configuration) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		actionRequest := new(ActionRequest)
 
-	err := json.NewDecoder(r.Body).Decode(actionRequest)
+		err := json.NewDecoder(r.Body).Decode(actionRequest)
 
-	if err != nil {
-		actionError(err, w)
-		return
+		if err != nil {
+			actionError(err, w)
+			return
+		}
+
+		actionResponse, err := RunAction(actionRequest, cfg)
+
+		if err != nil {
+			actionError(err, w)
+			return
+		}
+
+		responseData, err := json.Marshal(actionResponse)
+
+		if err != nil {
+			actionError(err, w)
+			return
+		}
+
+		w.Write(responseData)
 	}
-
-	actionResponse, err := RunAction(actionRequest)
-
-	if err != nil {
-		actionError(err, w)
-		return
-	}
-
-	responseData, err := json.Marshal(actionResponse)
-
-	if err != nil {
-		actionError(err, w)
-		return
-	}
-
-	w.Write(responseData)
 }
 
 func actionError(e error, w http.ResponseWriter) {
@@ -46,7 +48,7 @@ func actionError(e error, w http.ResponseWriter) {
 	w.Write(responseData)
 }
 
-type ActionRunner func (*ActionRequest) (*ActionResponse, error)
+type ActionRunner func(*ActionRequest, *Configuration) (*ActionResponse, error)
 
 var actionRunnerFactory = make(map[string]ActionRunner)
 
@@ -61,12 +63,18 @@ func Register(name string, runner ActionRunner) {
 	actionRunnerFactory[name] = runner
 }
 
-func RunAction(req *ActionRequest) (*ActionResponse, error) {
+func RunAction(req *ActionRequest, cfg *Configuration) (*ActionResponse, error) {
 	runner := actionRunnerFactory[req.Name]
 
 	if runner != nil {
-		return runner(req)
+		return runner(req, cfg)
 	} else {
 		return nil, errors.Errorf("No handler for request: %v", req.Name)
 	}
 }
+
+func setupHandlers() {
+	InitListActions();
+	InitRestartActions();
+}
+

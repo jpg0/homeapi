@@ -5,23 +5,14 @@ import (
 	"net/http"
 )
 
-func main() {
-	setupHandlers();
-	setupRouting();
-}
 
-func setupRouting() {
+func setupRouting(port string, cfg *Configuration) {
 	r := mux.NewRouter()
-	r.HandleFunc("/runAction", HandleAction)
+	r.HandleFunc("/runAction", ConfigureHandleAction(cfg))
 	http.Handle("/", r)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":" + port, nil)
 
 	if err != nil {
 		panic(err)
 	}
-}
-
-func setupHandlers() {
-	InitListActions();
-	InitRestartActions();
 }
