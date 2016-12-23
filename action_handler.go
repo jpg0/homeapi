@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/Sirupsen/logrus"
 	"github.com/juju/errors"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func ConfigureHandleAction(cfg map[string]string) func(http.ResponseWriter, *http.Request) {
@@ -67,7 +68,7 @@ func Register(name string, runner ActionRunner) {
 
 func RunAction(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 	logrus.Infof("Running action: %v", req.Name)
-	logrus.Debugf("Request details: %+v", req)
+	logrus.Debugf("Request details: %v", spew.Sprint(req))
 
 	runner := actionRunnerFactory[req.Name]
 
