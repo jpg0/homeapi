@@ -5,7 +5,7 @@ import (
 	"github.com/juju/errors"
 )
 
-func restart(req *ActionRequest, cfg *Configuration) (*ActionResponse, error) {
+func restart(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 
 	system, err := req.Entities.FirstEntityValue("system")
 

@@ -81,8 +81,8 @@ func ConfigureAndStart(c *cli.Context) error {
 	return nil
 }
 
-func loadConfiguration(path string) (*Configuration, error) {
-	rv := &Configuration{}
+func loadConfiguration(path string) (map[string]string, error) {
+	rv := make(map[string]string)
 	file, err := ioutil.ReadFile(path)
 
 	if err != nil {

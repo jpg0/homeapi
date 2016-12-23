@@ -7,7 +7,7 @@ import (
 	"github.com/juju/errors"
 )
 
-func ConfigureHandleAction(cfg *Configuration) func(http.ResponseWriter, *http.Request) {
+func ConfigureHandleAction(cfg map[string]string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		actionRequest := new(ActionRequest)
 
@@ -48,7 +48,7 @@ func actionError(e error, w http.ResponseWriter) {
 	w.Write(responseData)
 }
 
-type ActionRunner func(*ActionRequest, *Configuration) (*ActionResponse, error)
+type ActionRunner func(*ActionRequest, map[string]string) (*ActionResponse, error)
 
 var actionRunnerFactory = make(map[string]ActionRunner)
 
@@ -63,7 +63,7 @@ func Register(name string, runner ActionRunner) {
 	actionRunnerFactory[name] = runner
 }
 
-func RunAction(req *ActionRequest, cfg *Configuration) (*ActionResponse, error) {
+func RunAction(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 	runner := actionRunnerFactory[req.Name]
 
 	if runner != nil {

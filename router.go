@@ -6,7 +6,7 @@ import (
 )
 
 
-func setupRouting(port string, cfg *Configuration) {
+func setupRouting(port string, cfg map[string]string) {
 	r := mux.NewRouter()
 	r.HandleFunc("/runAction", ConfigureHandleAction(cfg))
 	http.Handle("/", r)

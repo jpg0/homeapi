@@ -9,7 +9,7 @@ import (
 
 type ListActions Configuration
 
-func list(req *ActionRequest, cfg *Configuration) (*ActionResponse, error) {
+func list(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 
 	s, err := sabnzbd.New(sabnzbd.Addr(cfg["sabnzbd_address"]), sabnzbd.ApikeyAuth(cfg["sabnzbd_apikey"]))
 
@@ -22,11 +22,11 @@ func list(req *ActionRequest, cfg *Configuration) (*ActionResponse, error) {
 	var buffer bytes.Buffer
 
 	for _, slot := range history.Slots {
-		fmt.Fprintf(buffer, "%v\n", slot)
+		buffer.WriteString(fmt.Sprintf("%v\n", slot))
 	}
 
 	period := "7 days"
-	data := string(buffer)
+	data := buffer.String()
 
 	return &ActionResponse{
 		Context: map[string]string{
