@@ -2,12 +2,14 @@ package main
 
 func list(req *ActionRequest) (*ActionResponse, error) {
 
-
-	//period :=
-
+	period := "7 days"
+	data := "some stuff"
 
 	return &ActionResponse{
-		Message: "some stuff",
+		Context: map[string]string{
+			"period": period,
+			"data": data,
+		},
 	}, nil
 }
 
