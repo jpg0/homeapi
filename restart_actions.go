@@ -12,7 +12,9 @@ func restart(req *ActionRequest, cfg map[string]string) (*ActionResponse, error)
 	system, err := req.Entities.FirstEntityValue("system")
 
 	if err != nil {
-		return nil, errors.Errorf("No system specified to restart")
+		return &ActionResponse{
+			Context: map[string]string{"missing_system": "true"},
+		}, nil
 	}
 
 	var restartable Restartable
