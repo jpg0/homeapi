@@ -22,7 +22,7 @@ func list(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 	var buffer bytes.Buffer
 
 	for _, slot := range history.Slots {
-		buffer.WriteString(fmt.Sprintf("%v\n", slot))
+		buffer.WriteString(fmt.Sprintf("%v\n", slot.Name))
 	}
 
 	period := "7 days"
