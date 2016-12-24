@@ -82,5 +82,6 @@ func RunAction(req *ActionRequest, cfg map[string]string) (*ActionResponse, erro
 func setupHandlers() {
 	InitListActions();
 	InitRestartActions();
+	InitDownloadActions();
 }
 
