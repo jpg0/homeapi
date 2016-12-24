@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"github.com/juju/errors"
+	"net"
+	"github.com/Sirupsen/logrus"
 )
 
 func restart(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
@@ -60,7 +62,14 @@ func (r *RemoteRebootable) Restart() (string, error) {
 		return "", errors.Errorf("Failed to invoke action, response code is: %v", response.StatusCode)
 	}
 
-	return request.Host, nil
+	host, _, err := net.SplitHostPort(request.Host)
+
+	if err != nil {
+		logrus.Errorf("Failed to split host:port in %v: %v", request.Host, err)
+		host = request.Host //just use the raw request.Host
+	}
+
+	return host, nil
 }
 
 func InitRestartActions() {
