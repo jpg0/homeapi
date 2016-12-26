@@ -9,7 +9,7 @@ import (
 
 type ListActions Configuration
 
-func list(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
+func list(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
 
 	s, err := sabnzbd.New(sabnzbd.Addr(cfg["sabnzbd_address"]), sabnzbd.ApikeyAuth(cfg["sabnzbd_apikey"]))
 
@@ -25,15 +25,10 @@ func list(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
 		buffer.WriteString(fmt.Sprintf("%v\n", slot.Name))
 	}
 
-	period := "7 days"
-	data := buffer.String()
+	ac.Add("period", "7 days")
+	ac.Add("data", buffer.String())
 
-	return &ActionResponse{
-		Context: map[string]string{
-			"period": period,
-			"data": data,
-		},
-	}, nil
+	return ac.Response(), nil
 }
 
 

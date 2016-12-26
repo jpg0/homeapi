@@ -7,14 +7,13 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
-func restart(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
+func restart(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
 
-	system, err := req.Entities.FirstEntityValue("system")
+	system, has_system := ac.MergeNew("system")
 
-	if err != nil {
-		return &ActionResponse{
-			Context: map[string]string{"missing_system": "true"},
-		}, nil
+	if !has_system {
+		ac.AddKey("missing_system")
+		return ac.Response(), nil
 	}
 
 	var restartable Restartable
@@ -30,9 +29,9 @@ func restart(req *ActionRequest, cfg map[string]string) (*ActionResponse, error)
 		return nil, errors.Annotate(err, "Failed to restart")
 	}
 
-	return &ActionResponse{
-		Context: map[string]string{"restarting": restarting},
-	}, nil
+	ac.Add("restarting", restarting)
+
+	return ac.Response(), nil
 }
 
 type Restartable interface {

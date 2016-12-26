@@ -51,7 +51,7 @@ func actionError(e error, w http.ResponseWriter) {
 	w.Write(responseData)
 }
 
-type ActionRunner func(*ActionRequest, map[string]string) (*ActionResponse, error)
+type ActionRunner func(*ActionContext, map[string]string) (*ActionResponse, error)
 
 var actionRunnerFactory = make(map[string]ActionRunner)
 
@@ -70,10 +70,25 @@ func RunAction(req *ActionRequest, cfg map[string]string) (*ActionResponse, erro
 	logrus.Infof("Running action: %v", req.Name)
 	logrus.Debugf("Request details: %v", spew.Sprint(req))
 
+	ac := NewActionContext(req.NewContext, req.Context)
+
+	previousIntent, previousPresent := ac.oldCtx["intent"]
+	newIntent, newPresent := ac.newCtx["intent"]
+
+	if newPresent {
+		if previousPresent {
+			if newIntent != previousIntent { //we've switched intents, so clear context
+				ac.RemoveAllNow()
+			}
+		}
+
+		ac.Add("intent", newIntent)
+	}
+
 	runner := actionRunnerFactory[req.Name]
 
 	if runner != nil {
-		return runner(req, cfg)
+		return runner(ac, cfg)
 	} else {
 		return nil, errors.Errorf("No handler for request: %v", req.Name)
 	}

@@ -4,42 +4,42 @@ func InitDownloadActions() {
 	Register("potential_downloads", PotentialDownloads)
 }
 
-func PotentialDownloads(req *ActionRequest, cfg map[string]string) (*ActionResponse, error) {
-	newCtx := make(map[string]string)
+func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
 
-	showname, err := req.Entities.FirstEntityValue("showname")
+	showname, present := ac.MergeNew("showname")
 
-	if err != nil {
-		newCtx["missing_showname"] = "omitted"
+	if present { //has a show name
+		ac.Remove("missing_showname")
+	} else {
+		ac.Add("missing_showname", "true")
 	}
 
-	showtype, err := req.Entities.FirstEntityValue("showtype")
+	showtype, present := ac.MergeNew("showtype")
 
-
-	if err != nil {
-		newCtx["missing_showtype"] = "omitted"
-	} else {
+	if present { //has a show type
 		switch showtype {
 		case "TV":
-			newCtx["showtype"] = "TV"
-			AddPotentialTVDownloads(showname, newCtx)
+			ac.Add("showtype", "TV")
+			AddPotentialTVDownloads(showname, ac)
 		case "Movie":
-			newCtx["showtype"] = "movie"
-			AddPotentialMovieDownloads(showname, newCtx)
+			ac.Add("showtype", "movie")
+			AddPotentialMovieDownloads(showname, ac)
+		default:
+			ac.Add("missing_showtype", "true")
 		}
+	} else {
+		ac.Add("missing_showtype", "true")
 	}
 
-	return &ActionResponse{
-		Context: newCtx,
-	}, nil
+	return ac.WriteTo(&ActionResponse{}), nil
 }
 
-func AddPotentialTVDownloads(showname string, ctx map[string]string){
-	ctx["showname"] = "my movie!"
-	ctx["singleshowoption"] = "true"
+func AddPotentialTVDownloads(showname string, ac *ActionContext) {
+	ac.Add("showname", "my movie!")
+	ac.Add("singleshowoption", "true")
 }
 
-func AddPotentialMovieDownloads(showname string, ctx map[string]string){
-	ctx["showname"] = "my tv show!"
-	ctx["singleshowoption"] = "true"
+func AddPotentialMovieDownloads(showname string, ac *ActionContext) {
+	ac.Add("showname", "my tv show!")
+	ac.Add("singleshowoption", "true")
 }
