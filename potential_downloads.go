@@ -1,5 +1,10 @@
 package main
 
+import (
+	"strings"
+	"github.com/Sirupsen/logrus"
+)
+
 func InitDownloadActions() {
 	Register("potential_downloads", PotentialDownloads)
 }
@@ -17,14 +22,16 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 	showtype, present := ac.MergeNew("showtype")
 
 	if present { //has a show type
-		switch showtype {
-		case "TV":
-			ac.Add("showtype", "TV")
+		switch strings.ToLower(showtype) {
+		case "tv":
+			ac.Add("showtype", "tv")
 			AddPotentialTVDownloads(showname, ac)
-		case "Movie":
+		case "movie":
 			ac.Add("showtype", "movie")
 			AddPotentialMovieDownloads(showname, ac)
 		default:
+			logrus.Infof("Unknown show type %v", showtype)
+			ac.Remove("showtype")
 			ac.Add("missing_showtype", "true")
 		}
 	} else {
