@@ -42,11 +42,9 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 }
 
 func AddPotentialTVDownloads(showname string, ac *ActionContext) {
-	ac.Add("showname", "my movie!")
-	ac.Add("singleshowoption", "true")
+	ac.Add("singleshowoption", "my movie!")
 }
 
 func AddPotentialMovieDownloads(showname string, ac *ActionContext) {
-	ac.Add("showname", "my tv show!")
-	ac.Add("singleshowoption", "true")
+	ac.Add("singleshowoption", "my tv show!")
 }
