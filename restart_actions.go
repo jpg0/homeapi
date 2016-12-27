@@ -21,6 +21,8 @@ func restart(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) 
 	switch system {
 	case "kodi":
 		restartable = NewRemoteRebootable("http://ubox:8808/")
+	default:
+		return nil, errors.Errorf("I can't restart %v!", system)
 	}
 
 	restarting, err := restartable.Restart()
