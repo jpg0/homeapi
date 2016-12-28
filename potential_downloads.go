@@ -33,7 +33,6 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 			if err != nil {
 				return nil, errors.Annotate(err, "Failed to lookup TV shows")
 			}
-
 		case "movie":
 			ac.Add("showtype", "movie")
 			err := AddPotentialMovieDownloads(showname, ac, cfg)
@@ -55,6 +54,8 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 }
 
 func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]string) error {
+	logrus.Debugf("Connecting to Sonarr at url: %v", cfg["sonarr_address"])
+
 	sc, err := go_sonarr.NewSonarrClient(cfg["sonarr_address"], cfg["sonarr_apikey"])
 
 	if err != nil {
