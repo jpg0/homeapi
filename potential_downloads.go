@@ -28,6 +28,7 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 		case "tv":
 			ac.Add("showtype", "tv")
 			err := AddPotentialTVDownloads(showname, ac, cfg)
+			ac.Remove("missing_showtype")
 
 			if err != nil {
 				return nil, errors.Annotate(err, "Failed to lookup TV shows")
@@ -36,6 +37,7 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 		case "movie":
 			ac.Add("showtype", "movie")
 			err := AddPotentialMovieDownloads(showname, ac, cfg)
+			ac.Remove("missing_showtype")
 
 			if err != nil {
 				return nil, errors.Annotate(err, "Failed to lookup movies")
