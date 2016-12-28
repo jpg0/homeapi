@@ -5,6 +5,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/jpg0/go-sonarr"
 	"github.com/juju/errors"
+	"fmt"
 )
 
 func InitDownloadActions() {
@@ -73,23 +74,28 @@ func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]
 
 	if len(slr) == 1 {
 		ac.Add("singleshowoption", slr[0].Title)
+		ac.Add("tvdbId", slr[0].TvdbID)
 	} else {
 
 		shows := ""
+		showIds := ""
 
 		for _, show := range slr {
 			shows += show.Title + "\n"
+			showIds += fmt.Sprintf("%v|", show.TvdbID)
 		}
 
 
 		ac.Add("multipleshowoption", shows)
+		ac.Add("tvdbIds", showIds)
+		ac.Remove("showname")
 	}
 
 	return nil
 }
 
 func AddPotentialMovieDownloads(showname string, ac *ActionContext, cfg map[string]string) error {
-	ac.Add("singleshowoption", "my tv show!")
+	ac.Add("singleshowoption", "my movie!")
 
 	return nil
 }
