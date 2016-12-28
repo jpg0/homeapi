@@ -54,6 +54,9 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 }
 
 func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]string) error {
+	ac.Remove("singleshowoption")
+	ac.Remove("multipleshowoption")
+
 	logrus.Debugf("Connecting to Sonarr at url: %v", cfg["sonarr_address"])
 
 	sc, err := go_sonarr.NewSonarrClient(cfg["sonarr_address"], cfg["sonarr_apikey"])
