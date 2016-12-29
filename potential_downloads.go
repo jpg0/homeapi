@@ -75,7 +75,7 @@ func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]
 
 	if len(slr) == 1 {
 		ac.Add("singleshowoption", slr[0].Title)
-		ac.Add("tvdbId", fmt.Sprintf("%v", slr[0].TvdbID))
+		ac.Add("tvdbid", fmt.Sprintf("%v", slr[0].TvdbID))
 	} else {
 
 		shows := ""
@@ -88,7 +88,7 @@ func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]
 
 
 		ac.Add("multipleshowoption", shows)
-		ac.Add("tvdbIds", showIds)
+		ac.Add("tvdbids", showIds)
 		ac.Remove("showname")
 	}
 
