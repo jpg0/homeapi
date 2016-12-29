@@ -61,5 +61,17 @@ func DownloadTV(tvdbid int, cfg map[string]string) (string, error) {
 		return "", errors.Annotate(err, "Failed to call Sonarr")
 	}
 
-	return spr.Title, nil
+	return getResponseText(spr), nil
+}
+
+func getResponseText(series go_sonarr.SonarrSeries) string {
+	if series.Images != nil {
+		for _, img := range series.Images {
+			if img.CoverType == "poster" {
+				return img.URL
+			}
+		}
+	}
+
+	return series.Title
 }
