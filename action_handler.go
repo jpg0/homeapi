@@ -98,5 +98,6 @@ func setupHandlers() {
 	InitListActions();
 	InitRestartActions();
 	InitDownloadActions();
+	InitPhotosActions();
 }
 
