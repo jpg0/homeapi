@@ -81,7 +81,7 @@ func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]
 		shows := ""
 		showIds := ""
 
-		for _, show := range *slr {
+		for _, show := range slr {
 			shows += show.Title + "\n"
 			showIds += fmt.Sprintf("%v|", show.TvdbID)
 		}

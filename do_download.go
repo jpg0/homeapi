@@ -5,6 +5,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/juju/errors"
 	"github.com/jpg0/go-sonarr"
+	"strconv"
 )
 
 func DoDownload(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
@@ -15,9 +16,13 @@ func DoDownload(ac *ActionContext, cfg map[string]string) (*ActionResponse, erro
 		//has a show type
 		switch strings.ToLower(showtype) {
 		case "tv":
-			tvdbid := ac.oldCtx("tvdbid")
+			tvdbid, err := strconv.ParseInt(ac.oldCtx["tvdbid"], 10, 0)
 
-			downloading, err := DownloadTV(tvdbid, cfg)
+			if err != nil {
+				return nil, errors.Annotatef(err, "Failed to parse tvdbid: %v", ac.oldCtx["tvdbid"])
+			}
+
+			downloading, err := DownloadTV(int(tvdbid), cfg)
 
 			if err != nil {
 				return nil, errors.Annotate(err, "Failed to download TV show")
@@ -41,19 +46,19 @@ func DoDownload(ac *ActionContext, cfg map[string]string) (*ActionResponse, erro
 	return ac.Response(), nil
 }
 
-func DownloadTV(tvdbid string, cfg map[string]string) (string, error) {
+func DownloadTV(tvdbid int, cfg map[string]string) (string, error) {
 	logrus.Debugf("Connecting to Sonarr at url: %v", cfg["sonarr_address"])
 
 	sc, err := go_sonarr.NewSonarrClient(cfg["sonarr_address"], cfg["sonarr_apikey"])
 
 	if err != nil {
-		return errors.Annotate(err, "Failed to create Sonarr client")
+		return "", errors.Annotate(err, "Failed to create Sonarr client")
 	}
 
 	spr, err := sc.CreateSeries(tvdbid)
 
 	if err != nil {
-		return errors.Annotate(err, "Failed to call Sonarr")
+		return "", errors.Annotate(err, "Failed to call Sonarr")
 	}
 
 	return spr.Title, nil
