@@ -56,6 +56,11 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 }
 
 func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]string) error {
+
+	if showname == "" {
+		return errors.New("Showname not specified")
+	}
+
 	ac.Remove("singleshowoption")
 	ac.Remove("multipleshowoption")
 
