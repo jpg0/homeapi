@@ -100,18 +100,18 @@ func toDataURI(imgUrl *url.URL) (string, error) {
 	res, err := http.DefaultClient.Get(imgUrl.String())
 
 	if err != nil {
-		return errors.Annotate(err, "Failed to download image from Sonarr")
+		return "", errors.Annotate(err, "Failed to download image from Sonarr")
 	}
 
 	raw, err := ioutil.ReadAll(res.Body)
 
 	if err != nil {
-		return errors.Annotate(err, "Failed to read image data from Sonarr")
+		return "", errors.Annotate(err, "Failed to read image data from Sonarr")
 	}
 
 	ext := path.Ext(imgUrl.Path)
 
 	contentType := mime.TypeByExtension(ext)
 
-	return fmt.Sprintf("data:%s;base64,%s", contentType, base64.StdEncoding.EncodeToString(raw))
+	return fmt.Sprintf("data:%s;base64,%s", contentType, base64.StdEncoding.EncodeToString(raw)), nil
 }
