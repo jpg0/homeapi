@@ -6,6 +6,14 @@ import (
 	"github.com/juju/errors"
 	"github.com/jpg0/go-sonarr"
 	"strconv"
+	"fmt"
+	"encoding/base64"
+	"net/http"
+	"net/url"
+	"bytes"
+	"io/ioutil"
+	"path"
+	"mime"
 )
 
 func DoDownload(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
@@ -61,17 +69,49 @@ func DownloadTV(tvdbid int, cfg map[string]string) (string, error) {
 		return "", errors.Annotate(err, "Failed to call Sonarr")
 	}
 
-	return getResponseText(spr), nil
+	return getResponseText(spr, cfg["sonarr_address"]), nil
 }
 
-func getResponseText(series go_sonarr.SonarrSeries) string {
+func getResponseText(series go_sonarr.SonarrSeries, sonarr_address string) string {
 	if series.Images != nil {
 		for _, img := range series.Images {
 			if img.CoverType == "poster" {
-				return img.URL
+				// download and convert to data URI
+
+				root, _ := url.Parse(sonarr_address)
+
+				dataURI, err := toDataURI(root.ResolveReference(img.URL))
+
+				if err != nil {
+					logrus.Debugf("Failed to ")
+					break
+				} else {
+					return dataURI
+				}
 			}
 		}
 	}
 
 	return series.Title
+}
+
+func toDataURI(imgUrl *url.URL) (string, error) {
+
+	res, err := http.DefaultClient.Get(imgUrl.String())
+
+	if err != nil {
+		return errors.Annotate(err, "Failed to download image from Sonarr")
+	}
+
+	raw, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return errors.Annotate(err, "Failed to read image data from Sonarr")
+	}
+
+	ext := path.Ext(imgUrl.Path)
+
+	contentType := mime.TypeByExtension(ext)
+
+	return fmt.Sprintf("data:%s;base64,%s", contentType, base64.StdEncoding.EncodeToString(raw))
 }
