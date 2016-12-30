@@ -10,7 +10,6 @@ import (
 	"encoding/base64"
 	"net/http"
 	"net/url"
-	"bytes"
 	"io/ioutil"
 	"path"
 	"mime"
@@ -79,8 +78,9 @@ func getResponseText(series go_sonarr.SonarrSeries, sonarr_address string) strin
 				// download and convert to data URI
 
 				root, _ := url.Parse(sonarr_address)
+				imgUrl, _ := url.Parse(img.URL)
 
-				dataURI, err := toDataURI(root.ResolveReference(img.URL))
+				dataURI, err := toDataURI(root.ResolveReference(imgUrl))
 
 				if err != nil {
 					logrus.Debugf("Failed to ")
