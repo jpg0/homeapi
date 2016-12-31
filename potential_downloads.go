@@ -29,11 +29,15 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 		switch strings.ToLower(showtype) {
 		case "tv":
 			ac.Add("showtype", "tv")
-			err := AddPotentialTVDownloads(showname, ac, cfg)
-			ac.Remove("missing_showtype")
 
-			if err != nil {
-				return nil, errors.Annotate(err, "Failed to lookup TV shows")
+			if showname != "" {
+
+				err := AddPotentialTVDownloads(showname, ac, cfg)
+				ac.Remove("missing_showtype")
+
+				if err != nil {
+					return nil, errors.Annotate(err, "Failed to lookup TV shows")
+				}
 			}
 		case "movie":
 			ac.Add("showtype", "movie")
