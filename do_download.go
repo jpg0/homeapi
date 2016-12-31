@@ -6,13 +6,10 @@ import (
 	"github.com/juju/errors"
 	"github.com/jpg0/go-sonarr"
 	"strconv"
-	"fmt"
-	"encoding/base64"
 	"net/http"
 	"net/url"
 	"io/ioutil"
-	"path"
-	"mime"
+	"github.com/vincent-petithory/dataurl"
 )
 
 func DoDownload(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
@@ -109,9 +106,5 @@ func toDataURI(imgUrl *url.URL) (string, error) {
 		return "", errors.Annotate(err, "Failed to read image data from Sonarr")
 	}
 
-	ext := path.Ext(imgUrl.Path)
-
-	contentType := mime.TypeByExtension(ext)
-
-	return fmt.Sprintf("data:%s;base64,%s", contentType, base64.StdEncoding.EncodeToString(raw)), nil
+	return dataurl.EncodeBytes(raw), nil
 }
