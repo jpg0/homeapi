@@ -18,8 +18,25 @@ func TestHydrate(t *testing.T) {
 
 	Hydrate(input, dc)
 
-	assert.Equal(t, "test_showname", dc.Showname)
+	assert.Equal(t, "test_showname", dc.Showquery)
 	assert.Equal(t, 12345, dc.Tvdbid)
+	assert.Equal(t, TV, dc.ShowType)
+	assert.Equal(t, []string{"abc", "def", "ghi"}, dc.ShowOptions)
+}
+
+func TestPartialHydrate(t *testing.T) {
+
+	input := make(map[string]string)
+
+	input["showtype"] = "tv"
+	input["showoptions"] = "abc&def&ghi"
+
+	dc := &DownloadContext{}
+
+	Hydrate(input, dc)
+
+	assert.Equal(t, "", dc.Showquery)
+	assert.Equal(t, 0, dc.Tvdbid)
 	assert.Equal(t, TV, dc.ShowType)
 	assert.Equal(t, []string{"abc", "def", "ghi"}, dc.ShowOptions)
 }
@@ -27,7 +44,7 @@ func TestHydrate(t *testing.T) {
 func TestResponse(t *testing.T) {
 
 	dc := &DownloadContext{
-		Showname:"test_showname",
+		Showquery:"test_showname",
 		Tvdbid:12345,
 		ShowType:TV,
 		ShowOptions:[]string{"abc", "def", "ghi"},

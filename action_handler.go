@@ -6,6 +6,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/juju/errors"
 	"github.com/davecgh/go-spew/spew"
+	"reflect"
 )
 
 func ConfigureHandleAction(cfg map[string]string) func(http.ResponseWriter, *http.Request) {
@@ -70,24 +71,6 @@ func RunAction(req *ActionRequest, cfg map[string]string) (*ActionResponse, erro
 	logrus.Infof("Running action: %v", req.Name)
 	logrus.Debugf("Request details: %v", spew.Sprint(req))
 
-
-	//
-	//
-	//ac := NewGenericContext(req.NewContext, req.Context)
-	//
-	//previousIntent, previousPresent := ac.oldCtx["intent"]
-	//newIntent, newPresent := ac.newCtx["intent"]
-	//
-	//if newPresent {
-	//	if previousPresent {
-	//		if newIntent != previousIntent { //we've switched intents, so clear context
-	//			ac.RemoveAllNow()
-	//		}
-	//	}
-	//
-	//	ac.Add("intent", newIntent)
-	//}
-
 	runner := actionRunnerFactory[req.Name]
 
 	if runner != nil {
@@ -103,6 +86,45 @@ func DehydratedResponse(i interface{}) *ActionResponse {
 	}
 }
 
+func AsGeneric(toWrap func(*GenericContext, map[string]string) (*ActionResponse, error)) ActionRunner {
+	return func (newCtx, oldCtx map[string]string, cfg map[string]string) (*ActionResponse, error) {
+		return toWrap(NewGenericContext(newCtx, oldCtx), cfg)
+	}
+}
+
+func WithHydration(toWrap interface{}) ActionRunner {
+	//toWrap = func(*SpecificContext, map[string]string) (*ActionResponse, error)
+
+	toWrapVal := reflect.ValueOf(toWrap)
+	specificType := toWrapVal.Type().In(0)
+
+
+	return func (newCtx, oldCtx map[string]string, cfg map[string]string) (*ActionResponse, error) {
+
+		specificCtxPtr := reflect.New(specificType.Elem())
+		specificCtx := reflect.Indirect(specificCtxPtr)
+
+		Hydrate(oldCtx, specificCtx.Interface())
+
+		params := []reflect.Value{
+			specificCtxPtr,
+			reflect.ValueOf(newCtx),
+			reflect.ValueOf(cfg),
+		}
+
+		returns := toWrapVal.Call(params)
+
+		var err error
+
+		if returns[1].IsNil() {
+			err = nil
+		} else {
+			err = returns[1].Interface().(error)
+		}
+
+		return returns[0].Interface().(*ActionResponse), err
+	}
+}
 
 func setupHandlers() {
 	InitListActions();

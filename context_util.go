@@ -10,20 +10,33 @@ import (
 )
 
 func Hydrate(ctx map[string]string, target interface{}) {
-	t := reflect.TypeOf(target).Elem()
+	v := reflect.ValueOf(target)
 
-	if t.Kind() != reflect.Struct {
-		panic(fmt.Sprintf("Cannot hydrate a %+v (%+v) (%v not Struct)", t, target, t.Kind()))
+	logrus.Debugf("Hydrating %v: %+v", v.Kind(), target)
+
+	for { //deref
+		if v.Kind() == reflect.Ptr {
+			v = v.Elem()
+			logrus.Debugf("Unwrapped %v: %+v", v.Kind(), v)
+		} else {
+			break
+		}
 	}
 
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
+	if v.Kind() != reflect.Struct {
+		panic(fmt.Sprintf("Cannot hydrate a %+v (%+v) (%v not Struct)", v, target, v.Kind()))
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Type().Field(i)
 
 		tag := field.Tag.Get("ctx")
 
-		val := coerce(ctx[tag], field.Type)
+		val, present := ctx[tag]
 
-		reflect.ValueOf(target).Elem().FieldByName(field.Name).Set(val)
+		if present {
+			v.FieldByName(field.Name).Set(coerce(val, field.Type))
+		}
 	}
 }
 
