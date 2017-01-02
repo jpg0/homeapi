@@ -13,7 +13,7 @@ func Hydrate(ctx map[string]string, target interface{}) {
 	t := reflect.TypeOf(target).Elem()
 
 	if t.Kind() != reflect.Struct {
-		panic(fmt.Sprintf("Cannot hydrate a %+v", t))
+		panic(fmt.Sprintf("Cannot hydrate a %+v (%+v) (%v not Struct)", t, target, t.Kind()))
 	}
 
 	for i := 0; i < t.NumField(); i++ {
