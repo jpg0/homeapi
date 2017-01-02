@@ -9,10 +9,10 @@ import (
 const DEFAULT_PHOTOS_PATH = "/photos/*.*"
 
 func InitPhotosActions() {
-	Register("photo_uploads", PhotoUploads)
+	Register("photo_uploads", AsGeneric(PhotoUploads))
 }
 
-func PhotoUploads(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
+func PhotoUploads(ac *GenericContext, cfg map[string]string) (*ActionResponse, error) {
 
 	var path string
 	var present bool

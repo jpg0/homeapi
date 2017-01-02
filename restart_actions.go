@@ -7,7 +7,7 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
-func restart(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
+func restart(ac *GenericContext, cfg map[string]string) (*ActionResponse, error) {
 
 	system, has_system := ac.MergeNew("system")
 
@@ -77,5 +77,5 @@ func (r *RemoteRebootable) Restart() (string, error) {
 }
 
 func InitRestartActions() {
-	Register("restart", restart)
+	Register("restart", AsGeneric(restart))
 }

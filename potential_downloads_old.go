@@ -8,12 +8,12 @@ import (
 	"fmt"
 )
 
-func InitDownloadActions() {
-	Register("potential_downloads", PotentialDownloads)
-	Register("do_download", DoDownload)
+func OldInitDownloadActions() {
+	//Register("potential_downloads", AsGeneric(OldPotentialDownloads))
+	//Register("do_download", AsGeneric(DoDownload))
 }
 
-func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionResponse, error) {
+func OldPotentialDownloads(ac *GenericContext, cfg map[string]string) (*ActionResponse, error) {
 
 	showname, present := ac.MergeNew("showname")
 
@@ -32,7 +32,7 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 
 			if showname != "" {
 
-				err := AddPotentialTVDownloads(showname, ac, cfg)
+				err := OldAddPotentialTVDownloads(showname, ac, cfg)
 				ac.Remove("missing_showtype")
 
 				if err != nil {
@@ -41,7 +41,7 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 			}
 		case "movie":
 			ac.Add("showtype", "movie")
-			err := AddPotentialMovieDownloads(showname, ac, cfg)
+			err := OldAddPotentialMovieDownloads(showname, ac, cfg)
 			ac.Remove("missing_showtype")
 
 			if err != nil {
@@ -59,7 +59,7 @@ func PotentialDownloads(ac *ActionContext, cfg map[string]string) (*ActionRespon
 	return ac.WriteTo(&ActionResponse{}), nil
 }
 
-func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]string) error {
+func OldAddPotentialTVDownloads(showname string, ac *GenericContext, cfg map[string]string) error {
 
 	if showname == "" {
 		return errors.New("Showname not specified")
@@ -82,7 +82,11 @@ func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]
 		return errors.Annotate(err, "Failed to call Sonarr")
 	}
 
-	if len(slr) == 1 {
+	if len (slr) == 0 {
+		ac.Remove("showname")
+		ac.Remove("multipleshowoption")
+		ac.AddKey("no_show_found")
+	} else if len(slr) == 1 {
 		ac.Add("singleshowoption", slr[0].Title)
 		ac.Add("tvdbid", fmt.Sprintf("%v", slr[0].TvdbID))
 	} else {
@@ -104,8 +108,24 @@ func AddPotentialTVDownloads(showname string, ac *ActionContext, cfg map[string]
 	return nil
 }
 
-func AddPotentialMovieDownloads(showname string, ac *ActionContext, cfg map[string]string) error {
+func OldAddPotentialMovieDownloads(showname string, ac *GenericContext, cfg map[string]string) error {
 	ac.Add("singleshowoption", "my movie!")
 
 	return nil
 }
+
+//const DOWNLOAD_CONTEXT_PARAMS = []string{"showname", "tvdbid", "showoptions"}
+
+//type DownloadContext struct {
+//	ac *GenericContext
+//}
+//
+//func (dc *DownloadContext) Response() {
+//	for _, param := range DOWNLOAD_CONTEXT_PARAMS {
+//		if !dc.ac.WillContain(param) {
+//			dc.ac.AddKey("no_" + param)
+//		}
+//	}
+//
+//	return dc.ac.Response()
+//}

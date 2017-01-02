@@ -11,4 +11,5 @@ type ActionResponse struct {
 	AddContext map[string]string `json:"addcontext,omitempty"`
 	RemoveContext []string `json:"removecontext,omitempty"`
 	E       error `json:"error,omitempty"`
+	ReplaceContext map[string]string `json:"replacecontext,omitempty"`
 }
