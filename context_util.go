@@ -12,6 +12,10 @@ import (
 func Hydrate(ctx map[string]string, target interface{}) {
 	t := reflect.TypeOf(target).Elem()
 
+	if t.Kind() != reflect.Struct {
+		panic(fmt.Sprintf("Cannot hydrate a %+v", t))
+	}
+
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
