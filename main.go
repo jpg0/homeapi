@@ -20,15 +20,18 @@ func main() {
 		cli.StringFlag{
 			Name: "configfile",
 			Usage: "Configuration File",
+			EnvVar: "CONFIGFILE",
 		},
 		cli.StringFlag{
 			Name: "port",
 			Usage: "Post to listen on",
+			EnvVar: "PORT",
 		},
 		cli.StringFlag{
 			Name: "loglevel",
 			Usage: "Logging level",
 			Value: "info",
+			EnvVar: "LOGLEVEL",
 		},
 	}
 	app.Action = verbose(ConfigureAndStart)
@@ -94,6 +97,8 @@ func loadConfiguration(path string) (map[string]string, error) {
 	if err != nil {
 		return nil, errors.Annotate(err, "Failed to unmarshal config")
 	}
+
+	logrus.Debugf("Loading config from file: %v", path)
 
 	return rv, nil
 }

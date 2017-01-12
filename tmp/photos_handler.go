@@ -9,7 +9,7 @@ import (
 const DEFAULT_PHOTOS_PATH = "/photos/*.*"
 
 func InitPhotosActions() {
-	Register("photo_uploads", AsGeneric(PhotoUploads))
+	RegisterHandler("photo_uploads", AsGeneric(PhotoUploads))
 }
 
 func PhotoUploads(ac *GenericContext, cfg map[string]string) (*ActionResponse, error) {

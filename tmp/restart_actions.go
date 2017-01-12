@@ -77,5 +77,5 @@ func (r *RemoteRebootable) Restart() (string, error) {
 }
 
 func InitRestartActions() {
-	Register("restart", AsGeneric(restart))
+	RegisterHandler("restart", AsGeneric(restart))
 }

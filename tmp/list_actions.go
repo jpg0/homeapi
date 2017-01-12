@@ -31,7 +31,6 @@ func list(ac *GenericContext, cfg map[string]string) (*ActionResponse, error) {
 	return ac.Response(), nil
 }
 
-
 func InitListActions() {
-	Register("list", AsGeneric(list))
+	RegisterHandler("list", AsGeneric(list))
 }
