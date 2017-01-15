@@ -7,6 +7,11 @@ import (
 	"net/url"
 )
 
+type TVShow struct {
+	title string
+	tvdbid int
+}
+
 type SonarrAPIClient struct {
 
 }
@@ -26,19 +31,11 @@ func (sac *SonarrAPIClient) LookupTVShows(dc *PotentialDownloadsModel, cfg map[s
 		return errors.Annotate(err, "Failed to call Sonarr")
 	}
 
-	if len (slr) == 0 {
-		dc.FoundShows([]string{})
-	} else if len(slr) == 1 {
-		dc.FoundShow(slr[0].Title, slr[0].TvdbID)
-	} else {
-		showoptions := make([]string, len(slr))
-
-		for _, show := range slr {
-			showoptions = append(showoptions, show.Title)
-		}
-
-		dc.FoundShows(showoptions)
+	shows := make([]TVShow, len(slr))
+	for i := range slr {
+		shows[i] = TVShow{title:slr[i].Title, tvdbid:slr[i].TvdbID}
 	}
+	dc.FoundShows(shows)
 
 	return nil
 }

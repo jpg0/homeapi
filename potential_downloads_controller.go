@@ -7,9 +7,13 @@ import (
 
 func InitPotentialDownloads() {
 	RegisterHandler("potential_downloads", &PotentialDownloadsController{
-		tvl: &SonarrAPIClientFake{
-			tvdbid: 12345,
-		},
+		//tvl: &SonarrAPIClientFake{
+		//	shows: []TVShow {
+		//		{title:"fake show 1", tvdbid:12345},
+		//		{title:"fake show 2", tvdbid:12346},
+		//	},
+		//},
+		tvl: &SonarrAPIClient{},
 	})
 }
 
@@ -41,17 +45,43 @@ func (dcm *PotentialDownloadsController) Run(req *APIAIRequest, config map[strin
 			return nil, errors.Annotate(err, "Failed to lookup shows")
 		}
 
-		if dc.Tvdbid != 0 {
-			newCtx := NewAPIAIContext("show", 5)
-			newCtx.Parameters["tvdbid"] = fmt.Sprint(dc.Tvdbid)
+		if len(dc.ShowOptions) == 0 {
+			newCtx := NewAPIAIContext("no_show", 1)
 			newCtx.Parameters["showtype"] = string(dc.ShowType)
+			newCtx.Parameters["showname"] = dc.Showquery
 
 			res.AddContext(newCtx)
 
-			res.SetMessage(fmt.Sprintf("Confirm download %v?", dc.ShowOptions[0]))
+			res.SetMessage(fmt.Sprintf("No show found for %v. Any others?", dc.Showquery))
+		} else if len(dc.ShowOptions) == 1 {
+			newCtx := NewAPIAIContext("show", 5)
+			newCtx.Parameters["tvdbid"] = fmt.Sprint(dc.ShowOptions[0].tvdbid)
+			newCtx.Parameters["showtype"] = string(dc.ShowType)
+			newCtx.Parameters["showname"] = dc.ShowOptions[0].title
+
+			res.AddContext(newCtx)
+
+			res.SetMessage(fmt.Sprintf("Confirm download %v?", dc.ShowOptions[0].title))
 
 		} else { //multiple options
 
+			newCtx := NewAPIAIContext("show_options", 1)
+			msg := "Please select from the following matches:\n"
+
+			for i := range dc.ShowOptions {
+				show := dc.ShowOptions[i]
+
+				newCtx.Parameters[fmt.Sprint(i)] = map[string]string{
+					"title":show.title,
+					"tvdbid":fmt.Sprint(show.tvdbid),
+					"showtype":string(dc.ShowType),
+				}
+
+				msg += fmt.Sprintf("%v) %v\n", i, show.title)
+			}
+
+			res.AddContext(newCtx)
+			res.SetMessage(msg)
 		}
 
 

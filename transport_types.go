@@ -59,7 +59,7 @@ type APIAIRequest struct {
 
 type APIAIContext struct {
 	Name       string `json:"name,omitempty"`
-	Parameters map[string]string `json:"parameters,omitempty"`
+	Parameters map[string]interface{} `json:"parameters,omitempty"`
 	Lifespan   int `json:"lifespan,omitempty"`
 }
 
@@ -67,7 +67,7 @@ func NewAPIAIContext(name string, lifespan int) *APIAIContext {
 	return &APIAIContext{
 		Name: name,
 		Lifespan: lifespan,
-		Parameters: make(map[string]string),
+		Parameters: make(map[string]interface{}),
 	}
 }
 

@@ -8,7 +8,8 @@ import (
 
 func InitDownloading() {
 	RegisterHandler("do_download", &DownloadingController{
-		tdl: &SonarrAPIClientFake{},
+		//tdl: &SonarrAPIClientFake{},
+		tdl: &SonarrAPIClient{},
 	})
 }
 
@@ -31,7 +32,7 @@ func (dc *DownloadingController) Run(req *APIAIRequest, cfg map[string]string) (
 				return nil, errors.Annotatef(err, "Failed to download tv: %v", dm.Tvdbid)
 			}
 
-			return NewAPIAIResponse(fmt.Sprintf("Downloading %v", dm.Showquery)), nil
+			return NewAPIAIResponse(fmt.Sprintf("Downloading: %v", dm.Showname)), nil
 		default:
 			return nil, errors.Errorf("Unknown showtype: %v", req.Result.Parameters["showtype"])
 		}
@@ -50,10 +51,10 @@ func (dc *DownloadingController) ToModel(req *APIAIRequest) (*DownloadingModel, 
 		dm.ShowType = showtype(showtypeStr)
 	}
 
-	showquery, present := req.Result.Parameters["showquery"]
+	showname, present := req.Result.Parameters["showname"]
 
 	if present {
-		dm.Showquery = showquery
+		dm.Showname = showname
 	}
 
 	tvdbid, present := req.Result.Parameters["tvdbid"]
@@ -91,7 +92,7 @@ func (dc *DownloadingController) Marshal(dm *DownloadingModel) map[string]string
 	ctx := make(map[string]string)
 
 	ctx["showtype"] = string(dm.ShowType)
-	ctx["showquery"] = string(dm.Showquery)
+	ctx["showname"] = string(dm.Showname)
 
 	if dm.Tvdbid != 0 {
 		ctx["tvdbid"] = fmt.Sprint(dm.Tvdbid)

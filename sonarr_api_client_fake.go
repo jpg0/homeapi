@@ -2,16 +2,12 @@ package main
 
 type SonarrAPIClientFake struct {
 	tvdbid int
-	shows []string
+	shows []TVShow
 }
 
 func (sac *SonarrAPIClientFake) LookupTVShows(dc *PotentialDownloadsModel, cfg map[string]string) error {
 
-	if sac.tvdbid != 0 {
-		dc.FoundShow("found_by_fake_client", sac.tvdbid)
-	} else {
-		dc.FoundShows(sac.shows)
-	}
+	dc.FoundShows(sac.shows)
 
 	return nil
 }

@@ -74,6 +74,7 @@ func setupHandlers() {
 	//InitRestartActions();
 	InitPotentialDownloads()
 	InitDownloading()
+	InitSelectShows()
 	//InitPhotosActions();
 }
 

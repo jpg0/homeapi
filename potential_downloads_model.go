@@ -12,8 +12,7 @@ const (
 type PotentialDownloadsModel struct {
 	ShowType showtype `ctx:"showtype"`
 	Showquery string `ctx:"showquery"`
-	Tvdbid int `ctx:"tvdbid"`
-	ShowOptions []string `ctx:"showoptions"`
+	ShowOptions []TVShow `ctx:"showoptions"`
 }
 
 func (dc *PotentialDownloadsModel) SetShowQuery(showquery string, cfg map[string]string) {
@@ -37,14 +36,6 @@ func (dc *PotentialDownloadsModel) SetShowType(st showtype, cfg map[string]strin
 	dc.ShowType = st
 }
 
-func (dc *PotentialDownloadsModel) FoundShow(showname string, tvdbid int) {
-
-	dc.ShowOptions = []string{showname}
-	dc.Tvdbid = tvdbid
-}
-
-func (dc *PotentialDownloadsModel) FoundShows(shownames []string) {
-
-	dc.Tvdbid = 0
-	dc.ShowOptions = shownames
+func (dc *PotentialDownloadsModel) FoundShows(shows []TVShow) {
+	dc.ShowOptions = shows
 }
