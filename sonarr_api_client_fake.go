@@ -2,7 +2,7 @@ package main
 
 type SonarrAPIClientFake struct {
 	tvdbid int
-	shows []TVShow
+	shows []Show
 }
 
 func (sac *SonarrAPIClientFake) LookupTVShows(dc *PotentialDownloadsModel, cfg map[string]string) error {

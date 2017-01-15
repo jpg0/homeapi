@@ -5,12 +5,8 @@ import (
 	"github.com/jpg0/go-sonarr"
 	"github.com/juju/errors"
 	"net/url"
+	"strconv"
 )
-
-type TVShow struct {
-	title string
-	tvdbid int
-}
 
 type SonarrAPIClient struct {
 
@@ -31,9 +27,9 @@ func (sac *SonarrAPIClient) LookupTVShows(dc *PotentialDownloadsModel, cfg map[s
 		return errors.Annotate(err, "Failed to call Sonarr")
 	}
 
-	shows := make([]TVShow, len(slr))
+	shows := make([]Show, len(slr))
 	for i := range slr {
-		shows[i] = TVShow{title:slr[i].Title, tvdbid:slr[i].TvdbID}
+		shows[i] = Show{title:slr[i].Title, showid:slr[i].TvdbID}
 	}
 	dc.FoundShows(shows)
 
@@ -49,7 +45,13 @@ func (sac *SonarrAPIClient) DownloadTVShow(dc *DownloadingModel, cfg map[string]
 		return errors.Annotate(err, "Failed to create Sonarr client")
 	}
 
-	spr, err := sc.CreateSeries(dc.Tvdbid)
+	showidI64, err := strconv.ParseInt(dc.Showid, 10, 0)
+
+	if err != nil {
+		return errors.Annotatef(err, "Failed to parse showid (tvdbid) as int")
+	}
+
+	spr, err := sc.CreateSeries(int(showidI64))
 
 	if err != nil {
 		return errors.Annotate(err, "Failed to call Sonarr")

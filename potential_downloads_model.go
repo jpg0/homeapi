@@ -12,7 +12,7 @@ const (
 type PotentialDownloadsModel struct {
 	ShowType showtype `ctx:"showtype"`
 	Showquery string `ctx:"showquery"`
-	ShowOptions []TVShow `ctx:"showoptions"`
+	ShowOptions []Show `ctx:"showoptions"`
 }
 
 func (dc *PotentialDownloadsModel) SetShowQuery(showquery string, cfg map[string]string) {
@@ -36,6 +36,6 @@ func (dc *PotentialDownloadsModel) SetShowType(st showtype, cfg map[string]strin
 	dc.ShowType = st
 }
 
-func (dc *PotentialDownloadsModel) FoundShows(shows []TVShow) {
+func (dc *PotentialDownloadsModel) FoundShows(shows []Show) {
 	dc.ShowOptions = shows
 }

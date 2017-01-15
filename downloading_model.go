@@ -3,7 +3,7 @@ package main
 
 type DownloadingModel struct {
 	Showname string `ctx:"showname"`
-	Tvdbid int `ctx:"tvdbid"`
+	Showid string `ctx:"showid"`
 	PosterUrl string `ctx:"posterurl"`
 	ShowType showtype `ctx:"showtype"`
 	Downloading string

@@ -39,7 +39,7 @@ func (ssc *SelectShowController) Run(req *APIAIRequest, config map[string]string
 	show := showI.(map[string]interface{})
 
 	newCtx := NewAPIAIContext("show", 5)
-	newCtx.Parameters["tvdbid"] = show["tvdbid"]
+	newCtx.Parameters["showid"] = show["showid"]
 	newCtx.Parameters["showtype"] = show["showtype"]
 	newCtx.Parameters["showname"] = show["title"]
 

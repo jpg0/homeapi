@@ -14,11 +14,13 @@ func InitPotentialDownloads() {
 		//	},
 		//},
 		tvl: &SonarrAPIClient{},
+		ml: &CouchpotatoAPIClient{},
 	})
 }
 
 type PotentialDownloadsController struct {
 	tvl TVLookup
+	ml MovieLookup
 }
 
 func (dcm *PotentialDownloadsController) LookupShows(dc *PotentialDownloadsModel, cfg map[string]string) error {
@@ -26,7 +28,7 @@ func (dcm *PotentialDownloadsController) LookupShows(dc *PotentialDownloadsModel
 	case TV:
 		return dcm.tvl.LookupTVShows(dc, cfg)
 	case Movie:
-		panic(nil)
+		return dcm.ml.LookupMovies(dc, cfg)
 	default:
 		return errors.Errorf("Unknown show type %v", dc.ShowType)
 	}
@@ -55,7 +57,7 @@ func (dcm *PotentialDownloadsController) Run(req *APIAIRequest, config map[strin
 			res.SetMessage(fmt.Sprintf("No show found for %v. Any others?", dc.Showquery))
 		} else if len(dc.ShowOptions) == 1 {
 			newCtx := NewAPIAIContext("show", 5)
-			newCtx.Parameters["tvdbid"] = fmt.Sprint(dc.ShowOptions[0].tvdbid)
+			newCtx.Parameters["showid"] = fmt.Sprint(dc.ShowOptions[0].showid)
 			newCtx.Parameters["showtype"] = string(dc.ShowType)
 			newCtx.Parameters["showname"] = dc.ShowOptions[0].title
 
@@ -73,7 +75,7 @@ func (dcm *PotentialDownloadsController) Run(req *APIAIRequest, config map[strin
 
 				newCtx.Parameters[fmt.Sprint(i)] = map[string]string{
 					"title":show.title,
-					"tvdbid":fmt.Sprint(show.tvdbid),
+					"showid":fmt.Sprint(show.showid),
 					"showtype":string(dc.ShowType),
 				}
 
@@ -98,9 +100,3 @@ func (dcm *PotentialDownloadsController) ToModel(req *APIAIRequest) *PotentialDo
 		Showquery: req.Result.Parameters["showquery"],
 	}
 }
-
-type TVLookup interface {
-	LookupTVShows(dc *PotentialDownloadsModel, cfg map[string]string) error
-}
-
-

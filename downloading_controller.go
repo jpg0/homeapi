@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/juju/errors"
 	"fmt"
-	"strconv"
 )
 
 func InitDownloading() {
@@ -29,7 +28,7 @@ func (dc *DownloadingController) Run(req *APIAIRequest, cfg map[string]string) (
 			err = dc.tdl.DownloadTVShow(dm, cfg)
 
 			if err != nil {
-				return nil, errors.Annotatef(err, "Failed to download tv: %v", dm.Tvdbid)
+				return nil, errors.Annotatef(err, "Failed to download tv: %v", dm.Showid)
 			}
 
 			return NewAPIAIResponse(fmt.Sprintf("Downloading: %v", dm.Showname)), nil
@@ -57,16 +56,10 @@ func (dc *DownloadingController) ToModel(req *APIAIRequest) (*DownloadingModel, 
 		dm.Showname = showname
 	}
 
-	tvdbid, present := req.Result.Parameters["tvdbid"]
+	showid, present := req.Result.Parameters["showid"]
 
 	if present {
-		tvdbidI64, err := strconv.ParseInt(tvdbid, 10, 0)
-
-		if err != nil {
-			return nil, errors.Annotatef(err, "Failed to parse tvdbid as int")
-		}
-
-		dm.Tvdbid = int(tvdbidI64)
+		dm.Showid = showid
 	}
 
 	posterurl, present := req.Result.Parameters["posterurl"]
@@ -94,16 +87,12 @@ func (dc *DownloadingController) Marshal(dm *DownloadingModel) map[string]string
 	ctx["showtype"] = string(dm.ShowType)
 	ctx["showname"] = string(dm.Showname)
 
-	if dm.Tvdbid != 0 {
-		ctx["tvdbid"] = fmt.Sprint(dm.Tvdbid)
+	if dm.Showid != "" {
+		ctx["showid"] = dm.Showid
 	}
 
 	ctx["posterurl"] = dm.PosterUrl
 	ctx["downloading"] = dm.Downloading
 
 	return ctx
-}
-
-type TVDownload interface {
-	DownloadTVShow(dc *DownloadingModel, cfg map[string]string) error
 }
