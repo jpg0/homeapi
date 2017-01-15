@@ -9,6 +9,7 @@ func InitDownloading() {
 	RegisterHandler("do_download", &DownloadingController{
 		//tdl: &SonarrAPIClientFake{},
 		tdl: &SonarrAPIClient{},
+		mdl: &CouchpotatoAPIClient{},
 	})
 }
 
@@ -31,7 +32,15 @@ func (dc *DownloadingController) Run(req *APIAIRequest, cfg map[string]string) (
 				return nil, errors.Annotatef(err, "Failed to download tv: %v", dm.Showid)
 			}
 
-			return NewAPIAIResponse(fmt.Sprintf("Downloading: %v", dm.Showname)), nil
+			return NewAPIAIResponse(fmt.Sprintf("Downloading tv show: %v", dm.Showname)), nil
+		case Movie:
+			err = dc.mdl.DownloadMovie(dm, cfg)
+
+			if err != nil {
+				return nil, errors.Annotatef(err, "Failed to download movie: %v", dm.Showid)
+			}
+
+			return NewAPIAIResponse(fmt.Sprintf("Downloading movie: %v", dm.Showname)), nil
 		default:
 			return nil, errors.Errorf("Unknown showtype: %v", req.Result.Parameters["showtype"])
 		}
@@ -39,7 +48,6 @@ func (dc *DownloadingController) Run(req *APIAIRequest, cfg map[string]string) (
 		return nil, errors.Errorf("Unknown confirmation type: %v", req.Result.Parameters["confirmation"])
 	}
 }
-
 
 func (dc *DownloadingController) ToModel(req *APIAIRequest) (*DownloadingModel, error) {
 	dm := &DownloadingModel{}
@@ -79,6 +87,7 @@ func (dc *DownloadingController) ToModel(req *APIAIRequest) (*DownloadingModel, 
 
 type DownloadingController struct {
 	tdl TVDownload
+	mdl MovieDownload
 }
 
 func (dc *DownloadingController) Marshal(dm *DownloadingModel) map[string]string {
