@@ -7,7 +7,7 @@ import (
 
 
 func setupRouting(overrideHttpPort string, cfg map[string]string) {
-	mux := http.NewServeMux()
+	mux := http.DefaultServeMux
 	mux.HandleFunc("/", ConfigureHandleAction(cfg))
 
 	https_port, use_https := cfg["https_port"]
