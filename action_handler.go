@@ -71,7 +71,7 @@ func RunAction(req *APIAIRequest, cfg map[string]string) (*APIAIResponse, error)
 
 func setupHandlers() {
 	//InitListActions();
-	//InitRestartActions();
+	InitRestartActions();
 	InitPotentialDownloads()
 	InitDownloading()
 	InitSelectShows()
