@@ -10,10 +10,10 @@ type CouchpotatoAPIClient struct {
 
 }
 
-func (cac *CouchpotatoAPIClient) LookupMovies(dc *PotentialDownloadsModel, cfg map[string]string) error {
-	logrus.Debugf("Connecting to Couchpotato at url: %v", cfg["sonarr_address"])
+func (cac *CouchpotatoAPIClient) LookupMovies(dc *PotentialDownloadsModel, cfg *Configuration) error {
+	logrus.Debugf("Connecting to Couchpotato at url: %v", cfg.CouchpotatoAddress)
 
-	cc, err := go_couchpotato.NewCouchpotatoClient(cfg["couchpotato_address"], cfg["couchpotato_apikey"])
+	cc, err := go_couchpotato.NewCouchpotatoClient(cfg.CouchpotatoAddress, cfg.CouchpotatoApikey)
 
 	if err != nil {
 		return errors.Annotate(err, "Failed to create Couchpotato client")
@@ -34,10 +34,10 @@ func (cac *CouchpotatoAPIClient) LookupMovies(dc *PotentialDownloadsModel, cfg m
 	return nil
 }
 
-func (cac *CouchpotatoAPIClient) DownloadMovie(dc *DownloadingModel, cfg map[string]string) error {
-	logrus.Debugf("Connecting to Couchpotato at url: %v", cfg["sonarr_address"])
+func (cac *CouchpotatoAPIClient) DownloadMovie(dc *DownloadingModel, cfg *Configuration) error {
+	logrus.Debugf("Connecting to Couchpotato at url: %v", cfg.CouchpotatoAddress)
 
-	cc, err := go_couchpotato.NewCouchpotatoClient(cfg["couchpotato_address"], cfg["couchpotato_apikey"])
+	cc, err := go_couchpotato.NewCouchpotatoClient(cfg.CouchpotatoAddress, cfg.CouchpotatoApikey)
 
 	if err != nil {
 		return errors.Annotate(err, "Failed to create Couchpotato client")

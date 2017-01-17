@@ -1,8 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
-	"encoding/json"
 	"github.com/juju/errors"
 	"os"
 	"fmt"
@@ -83,24 +81,3 @@ func ConfigureAndStart(c *cli.Context) error {
 
 	return nil
 }
-
-func loadConfiguration(path string) (map[string]string, error) {
-	var rv map[string]string
-	file, err := ioutil.ReadFile(path)
-
-	if err != nil {
-		return nil, errors.Annotate(err, "Failed to read config file")
-	}
-
-	err = json.Unmarshal(file, &rv)
-
-	if err != nil {
-		return nil, errors.Annotate(err, "Failed to unmarshal config")
-	}
-
-	logrus.Debugf("Loading config from file: %v", path)
-
-	return rv, nil
-}
-
-type Configuration map[string]string

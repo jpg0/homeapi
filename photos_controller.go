@@ -16,11 +16,11 @@ type PhotosController struct {
 
 }
 
-func (pc *PhotosController) Run(req *APIAIRequest, cfg map[string]string) (*APIAIResponse, error) {
+func (pc *PhotosController) Run(req *APIAIRequest, cfg *Configuration) (*APIAIResponse, error) {
 
-	var path string
-	var present bool
-	if path, present = cfg["photos_path"] ; !present {
+	path := cfg.PhotosPath
+
+	if path == "" {
 		path = DEFAULT_PHOTOS_PATH
 	}
 

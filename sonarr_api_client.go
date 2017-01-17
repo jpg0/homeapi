@@ -12,10 +12,10 @@ type SonarrAPIClient struct {
 
 }
 
-func (sac *SonarrAPIClient) LookupTVShows(dc *PotentialDownloadsModel, cfg map[string]string) error {
-	logrus.Debugf("Connecting to Sonarr at url: %v", cfg["sonarr_address"])
+func (sac *SonarrAPIClient) LookupTVShows(dc *PotentialDownloadsModel, cfg *Configuration) error {
+	logrus.Debugf("Connecting to Sonarr at url: %v", cfg.SonarrAddress)
 
-	sc, err := go_sonarr.NewSonarrClient(cfg["sonarr_address"], cfg["sonarr_apikey"])
+	sc, err := go_sonarr.NewSonarrClient(cfg.SonarrAddress, cfg.SonarrApikey)
 
 	if err != nil {
 		return errors.Annotate(err, "Failed to create Sonarr client")
@@ -36,10 +36,10 @@ func (sac *SonarrAPIClient) LookupTVShows(dc *PotentialDownloadsModel, cfg map[s
 	return nil
 }
 
-func (sac *SonarrAPIClient) DownloadTVShow(dc *DownloadingModel, cfg map[string]string) error {
-	logrus.Debugf("Connecting to Sonarr at url: %v", cfg["sonarr_address"])
+func (sac *SonarrAPIClient) DownloadTVShow(dc *DownloadingModel, cfg *Configuration) error {
+	logrus.Debugf("Connecting to Sonarr at url: %v", cfg.SonarrAddress)
 
-	sc, err := go_sonarr.NewSonarrClient(cfg["sonarr_address"], cfg["sonarr_apikey"])
+	sc, err := go_sonarr.NewSonarrClient(cfg.SonarrAddress, cfg.SonarrApikey)
 
 	if err != nil {
 		return errors.Annotate(err, "Failed to create Sonarr client")
@@ -57,7 +57,7 @@ func (sac *SonarrAPIClient) DownloadTVShow(dc *DownloadingModel, cfg map[string]
 		return errors.Annotate(err, "Failed to call Sonarr")
 	}
 
-	dc.PosterUrl = posterUrl(spr, cfg["sonarr_address"])
+	dc.PosterUrl = posterUrl(spr, cfg.SonarrAddress)
 	dc.Downloading = "true"
 
 	return nil

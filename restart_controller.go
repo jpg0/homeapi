@@ -13,7 +13,7 @@ type RestartController struct {
 
 }
 
-func (rc *RestartController) Run(req *APIAIRequest, config map[string]string) (*APIAIResponse, error) {
+func (rc *RestartController) Run(req *APIAIRequest, config *Configuration) (*APIAIResponse, error) {
 
 	logrus.Debugf("Restart system command received")
 

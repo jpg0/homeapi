@@ -13,7 +13,7 @@ type SelectShowController struct {
 
 }
 
-func (ssc *SelectShowController) Run(req *APIAIRequest, config map[string]string) (*APIAIResponse, error) {
+func (ssc *SelectShowController) Run(req *APIAIRequest, config *Configuration) (*APIAIResponse, error) {
 	idxStr := req.Result.Parameters["show_index"]
 
 	//idx, err := strconv.Atoi(idxStr)

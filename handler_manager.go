@@ -5,7 +5,7 @@ import (
 )
 
 type ActionHandler interface {
-	Run(req *APIAIRequest, config map[string]string) (*APIAIResponse, error)
+	Run(req *APIAIRequest, config *Configuration) (*APIAIResponse, error)
 }
 
 var handlerFactory = make(map[string]ActionHandler)

@@ -6,17 +6,17 @@ type Show struct {
 }
 
 type TVLookup interface {
-	LookupTVShows(dc *PotentialDownloadsModel, cfg map[string]string) error
+	LookupTVShows(dc *PotentialDownloadsModel, cfg *Configuration) error
 }
 
 type MovieLookup interface {
-	LookupMovies(dc *PotentialDownloadsModel, cfg map[string]string) error
+	LookupMovies(dc *PotentialDownloadsModel, cfg *Configuration) error
 }
 
 type TVDownload interface {
-	DownloadTVShow(dc *DownloadingModel, cfg map[string]string) error
+	DownloadTVShow(dc *DownloadingModel, cfg *Configuration) error
 }
 
 type MovieDownload interface {
-	DownloadMovie(dc *DownloadingModel, cfg map[string]string) error
+	DownloadMovie(dc *DownloadingModel, cfg *Configuration) error
 }

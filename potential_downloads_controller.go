@@ -23,7 +23,7 @@ type PotentialDownloadsController struct {
 	ml MovieLookup
 }
 
-func (dcm *PotentialDownloadsController) LookupShows(dc *PotentialDownloadsModel, cfg map[string]string) error {
+func (dcm *PotentialDownloadsController) LookupShows(dc *PotentialDownloadsModel, cfg *Configuration) error {
 	switch dc.ShowType {
 	case TV:
 		return dcm.tvl.LookupTVShows(dc, cfg)
@@ -34,7 +34,7 @@ func (dcm *PotentialDownloadsController) LookupShows(dc *PotentialDownloadsModel
 	}
 }
 
-func (dcm *PotentialDownloadsController) Run(req *APIAIRequest, config map[string]string) (*APIAIResponse, error) {
+func (dcm *PotentialDownloadsController) Run(req *APIAIRequest, config *Configuration) (*APIAIResponse, error) {
 
 	res := NewAPIAIResponse("")
 

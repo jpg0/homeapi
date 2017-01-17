@@ -8,7 +8,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
-func ConfigureHandleAction(cfg map[string]string) func(http.ResponseWriter, *http.Request) {
+func ConfigureHandleAction(cfg *Configuration) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		logrus.Debugf("Accepted new request")
@@ -56,7 +56,7 @@ func actionError(e error, w http.ResponseWriter) {
 }
 
 
-func RunAction(req *APIAIRequest, cfg map[string]string) (*APIAIResponse, error) {
+func RunAction(req *APIAIRequest, cfg *Configuration) (*APIAIResponse, error) {
 	logrus.Infof("Running action: %v", req.Result.Action)
 	logrus.Debugf("Request details: %v", spew.Sprint(req))
 

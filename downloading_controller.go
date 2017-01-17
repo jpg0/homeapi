@@ -13,7 +13,7 @@ func InitDownloading() {
 	})
 }
 
-func (dc *DownloadingController) Run(req *APIAIRequest, cfg map[string]string) (*APIAIResponse, error) {
+func (dc *DownloadingController) Run(req *APIAIRequest, cfg *Configuration) (*APIAIResponse, error) {
 	dm, err := dc.ToModel(req)
 
 	if err != nil {
