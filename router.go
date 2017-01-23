@@ -10,7 +10,7 @@ import (
 
 func setupRouting(overrideHttpPort string, cfg *Configuration) {
 	mux := http.DefaultServeMux
-	mux.HandleFunc("/", ConfigureHandleAction(cfg))
+	mux.HandleFunc("/", WithAuth(ConfigureHandleAction(cfg), cfg))
 
 	https_port := cfg.HTTPSPort
 
@@ -67,4 +67,27 @@ func serveSSLWithKeyfiles(https_port string, mux *http.ServeMux, cfg *Configurat
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
 	logrus.Fatal(srv.ListenAndServeTLS(cfg.Resolve(cfg.TLSCrtFile), cfg.Resolve(cfg.TLSKeyFile)))
+}
+
+func WithAuth(h http.HandlerFunc, c *Configuration) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		type Password struct {
+			Value string
+		}
+
+
+		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+
+		_, password, _ := r.BasicAuth()
+
+		if password != c.AuthPassword {
+			http.Error(w, "Not authorized", 401)
+			return
+		} else {
+			h(w, r)
+		}
+
+		return
+	}
 }

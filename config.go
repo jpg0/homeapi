@@ -42,6 +42,7 @@ type Configuration struct {
 	TLSCrtFile string `json:"tls_crt_file"`
 	TLSKeyFile string `json:"tls_key_file"`
 	PhotosPath string `json:"photos_path"`
+	AuthPassword string `json:"auth_password"`
 
 	loadPath string //source of the config file
 }
