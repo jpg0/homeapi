@@ -70,11 +70,11 @@ func RunAction(req *APIAIRequest, cfg *Configuration) (*APIAIResponse, error) {
 }
 
 func setupHandlers() {
-	//InitListActions();
 	InitRestartActions();
 	InitPotentialDownloads()
 	InitDownloading()
 	InitSelectShows()
 	InitPhotosActions();
+	InitShowDownloadsController();
 }
 
